@@ -1,31 +1,23 @@
 package pages;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.*;
+import utils.WaitUtils;
 
 public class LoginPage {
 
-    WebDriver driver;
+    private WebDriver driver;
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
-    @FindBy(name = "email")
-    private WebElement emailField;
-
-    @FindBy(name = "password")
-    private WebElement passwordField;
-
-    @FindBy(css = "button[type='submit']")
-    private WebElement loginButton;
+    private By emailInput = By.name("email");
+    private By passwordInput = By.name("password");
+    private By loginBtn = By.xpath("//button[contains(text(),'Login')]");
 
     public void login(String email, String password) {
-        emailField.sendKeys(email);
-        passwordField.sendKeys(password);
-        loginButton.click();
+        driver.findElement(emailInput).sendKeys(email);
+        driver.findElement(passwordInput).sendKeys(password);
+        driver.findElement(loginBtn).click();
     }
 }

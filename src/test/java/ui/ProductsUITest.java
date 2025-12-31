@@ -1,79 +1,49 @@
 package ui;
 
+import driver.DriverManager;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import pages.LoginPage;
-import utils.WaitUtils;
-import driver.DriverManager;
+import pages.*;
 
 public class ProductsUITest {
 
     WebDriver driver;
+    ProductsPage productsPage;
+    CartPage cartPage;
+    CheckoutPage checkoutPage;
+    LoginPage loginPage;
 
     @BeforeMethod
     public void setUp() {
         driver = new ChromeDriver();
-        DriverManager.setDriver(driver);   // ✅ IMPORTANT
+        DriverManager.setDriver(driver);
         driver.manage().window().maximize();
+
+        productsPage = new ProductsPage(driver);
+        cartPage = new CartPage(driver);
+        checkoutPage = new CheckoutPage(driver);
+        loginPage = new LoginPage(driver);
     }
 
     @Test
     public void addProductToCartAndLogin() {
 
-        // Positive Scenario
         driver.get("https://automationexercise.com/products");
 
-        // Handle ad iframe if present
-        try {
-            WebElement adFrame = driver.findElement(By.id("aswift_3"));
-            ((JavascriptExecutor) driver)
-                    .executeScript("arguments[0].style.display='none';", adFrame);
-        } catch (Exception ignored) {
-        }
+        productsPage.hideAdIfPresent();
+        productsPage.addFirstProductToCart();
+        productsPage.waitForCartPopup();
+        productsPage.clickViewCart();
 
-        // Add first product to cart
-        WebElement firstProductAddBtn =
-                driver.findElement(By.xpath("(//a[contains(text(),'Add to cart')])[1]"));
-        WaitUtils.waitForElementClickable(firstProductAddBtn);
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", firstProductAddBtn);
+        cartPage.proceedToCheckout();
+        checkoutPage.clickRegisterOrLogin();
 
-        // Wait for cart popup
-        WebElement cartPopup = driver.findElement(By.id("cartModal"));
-        WaitUtils.waitForElementVisible(cartPopup);
+        loginPage.login("ujitha@gmail.com", "uji@123");
 
-        // View Cart
-        WebElement viewCartBtn =
-                driver.findElement(By.xpath("//a[@href='/view_cart']"));
-        WaitUtils.waitForElementClickable(viewCartBtn);
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", viewCartBtn);
-
-        // Proceed to Checkout
-        WebElement proceedBtn =
-                driver.findElement(By.xpath("//a[contains(text(),'Proceed To Checkout')]"));
-        WaitUtils.waitForElementClickable(proceedBtn);
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", proceedBtn);
-
-        // Register / Login
-        WebElement registerLoginBtn =
-                driver.findElement(By.xpath("//*[@id='checkoutModal']//a/u"));
-        WaitUtils.waitForElementClickable(registerLoginBtn);
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", registerLoginBtn);
-
-        // Login
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.login("ujitha@gmail.com", "uji@123"); // valid creds
-
-        // Verify Logout button
         WebElement logoutBtn =
                 driver.findElement(By.xpath("//a[contains(text(),'Logout')]"));
-        WaitUtils.waitForElementVisible(logoutBtn);
-
         Assert.assertTrue(logoutBtn.isDisplayed(),
                 "Logout button is not displayed!");
 
@@ -85,32 +55,13 @@ public class ProductsUITest {
 
         driver.get("https://automationexercise.com/products");
 
-        // Open Cart directly
-        WebElement viewCartBtn =
-                driver.findElement(By.xpath("//a[@href='/view_cart']"));
-        WaitUtils.waitForElementClickable(viewCartBtn);
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", viewCartBtn);
+        productsPage.clickViewCart();
 
-        // Validate empty cart message
-        WebElement emptyCartMsg =
-                driver.findElement(By.xpath("//*[contains(text(),'Cart is empty')]"));
-        WaitUtils.waitForElementVisible(emptyCartMsg);
-
-        Assert.assertTrue(emptyCartMsg.isDisplayed(),
+        Assert.assertTrue(cartPage.isCartEmpty(),
                 "Empty cart message not displayed!");
 
-        System.out.println("Negative Test: Empty cart message displayed");
-
-        // click "here" link
-        try {
-            WebElement hereLink =
-                    emptyCartMsg.findElement(By.xpath(".//a[contains(text(),'here')]"));
-            WaitUtils.waitForElementClickable(hereLink);
-            hereLink.click();
-            System.out.println("Navigated back to products page");
-        } catch (NoSuchElementException ignored) {
-        }
+        cartPage.clickHereLinkIfPresent();
+        System.out.println("Negative Test: Empty cart handled correctly");
     }
 
     @AfterMethod
