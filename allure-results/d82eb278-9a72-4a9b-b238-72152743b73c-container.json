@@ -1,0 +1,1 @@
+{"uuid":"d82eb278-9a72-4a9b-b238-72152743b73c","name":"integration.AmazonE2ETest.setup","children":["8f4f3f03-561e-4593-bdac-af16d3923906"],"description":"","befores":[{"name":"setup","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1767155035331,"stop":1767155037784}],"afters":[],"start":1767155035323,"stop":1767155037785}

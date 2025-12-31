@@ -1,0 +1,1 @@
+{"uuid":"3df873b4-7e4f-4507-9417-70b47a1736e3","name":"ui.LoginNegativeTest.setup","children":["00aa0311-0b02-4f8c-bd2f-9705431b969b"],"description":"","befores":[{"name":"setup","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1767089395484,"stop":1767089402294}],"afters":[],"start":1767089395482,"stop":1767089402294}

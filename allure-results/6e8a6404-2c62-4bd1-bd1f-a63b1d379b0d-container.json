@@ -1,0 +1,1 @@
+{"uuid":"6e8a6404-2c62-4bd1-bd1f-a63b1d379b0d","name":"ui.LoginPositiveTest.setup","children":["eb04afa2-4a17-4d34-a342-a86ebf7f7d50"],"description":"","befores":[{"name":"setup","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1767091763632,"stop":1767091765810}],"afters":[],"start":1767091763631,"stop":1767091765811}

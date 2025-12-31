@@ -1,0 +1,1 @@
+{"uuid":"927d1528-98f6-4dd8-ab95-c580d6581405","name":"ui.AutomationExerciseApiTests","children":["ee047d36-dc10-4eb9-91ba-da1cac28aeed"],"befores":[{"name":"setup","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1767197798790,"stop":1767197799168}],"afters":[],"start":1767197798758,"stop":1767197802558}
