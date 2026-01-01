@@ -1,10 +1,78 @@
 pipeline {
     agent any
+
+    tools {
+        jdk 'JDK17'
+        maven 'Maven3'
+    }
+
+    environment {
+        MAVEN_OPTS = "-Dmaven.repo.local=.m2/repository"
+    }
+
     stages {
-        stage('Execute Tests') {
+
+        stage('Checkout Code') {
             steps {
-                sh 'mvn clean test'
+                checkout scm
             }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Building the project..."
+                sh 'mvn clean compile'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Executing automated tests..."
+                sh 'mvn test'
+            }
+        }
+
+        stage('Publish Test Reports') {
+            steps {
+                publishHTML(target: [
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'target/surefire-reports',
+                    reportFiles: 'index.html',
+                    reportName: 'Automation Test Report'
+                ])
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true
+            }
+        }
+
+        // OPTIONAL – Deployment step
+        stage('Deploy (Optional)') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Deploying application or reports..."
+                // Example:
+                // sh 'scp target/*.jar user@server:/deploy/location'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo " CI/CD Pipeline executed successfully"
+        }
+        failure {
+            echo " Pipeline failed. Check logs & reports"
+        }
+        always {
+            cleanWs()
         }
     }
 }
